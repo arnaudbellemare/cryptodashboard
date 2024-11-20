@@ -14,7 +14,7 @@ st.set_page_config(
 # Function to fetch data
 def fetch_data():
     url = 'https://api.quantumvoid.org/data/quantdatav2_bybit.json'
-    response = requests.get(url)
+    response = requests.get(url, headers={'Cache-Control': 'no-cache'})
     if response.status_code == 200:
         data = response.json()
         if isinstance(data, list):
@@ -35,8 +35,6 @@ if "data" not in st.session_state or "last_fetched" not in st.session_state:
 # Manual Refresh Button
 if st.button("Refresh Data"):
     # Clear session state to force a fresh fetch
-    del st.session_state.data
-    del st.session_state.last_fetched
     st.session_state.data, st.session_state.last_fetched = fetch_data()
 
 # Display last fetch time
