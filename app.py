@@ -17,26 +17,25 @@ def fetch_live_data():
         response = requests.get(url, headers={'Cache-Control': 'no-cache'})
         if response.status_code == 200:
             data = response.json()
+            print("Fetched Data:", data)  # Debugging: Log fetched data
             if isinstance(data, list):
                 return pd.DataFrame(data), datetime.now()  # Return data and fetch time
         else:
             st.error(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
     except Exception as e:
         st.error(f"An error occurred while fetching data: {e}")
+        print(f"Error fetching data: {e}")  # Debugging
     return pd.DataFrame(), None  # Return empty DataFrame and None if API fails
 
 # Streamlit app layout
 st.title("Live Crypto Data Dashboard")
-
-# Periodic refresh
-st.experimental_set_query_params(refresh=datetime.now().timestamp())
 
 # Fetch live data
 data, last_fetched = fetch_live_data()
 
 # Display last fetch time
 if last_fetched:
-    st.write(f"**Data last fetched at:** {last_fetched.strftime('%Y-%m-%d %H:%M:%S')}")
+    st.write(f"**Data last fetched at:** {last_fetched.strftime('%Y-%m-%d %H:%M:%S')} (Server Time)")
 
 # Display data if available
 if not data.empty:
@@ -51,7 +50,7 @@ if not data.empty:
     # Display the data table
     st.dataframe(
         sorted_data,
-        height=1000,  # Adjust the height in pixels for a taller table
+        height=700,  # Adjust the height in pixels for a taller table
         use_container_width=True  # Ensures the table stretches to the full width
     )
 
@@ -65,5 +64,4 @@ if not data.empty:
     )
 else:
     st.error("No data available. Please try again later.")
-
 
