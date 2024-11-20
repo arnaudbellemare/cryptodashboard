@@ -34,6 +34,9 @@ if "data" not in st.session_state or "last_fetched" not in st.session_state:
 
 # Manual Refresh Button
 if st.button("Refresh Data"):
+    # Clear session state to force a fresh fetch
+    del st.session_state.data
+    del st.session_state.last_fetched
     st.session_state.data, st.session_state.last_fetched = fetch_data()
 
 # Display last fetch time
@@ -53,7 +56,7 @@ if not st.session_state.data.empty:
     # Display the data table with larger (wider and taller) size
     st.dataframe(
         sorted_df,
-        height=700,  # Adjust the height in pixels for a taller table
+        height=1000,  # Adjust the height in pixels for a taller table
         use_container_width=True  # Ensures the table stretches to the full width
     )
 
