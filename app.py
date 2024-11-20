@@ -43,10 +43,11 @@ if not st.session_state.data.empty:
     # Sort the DataFrame
     sorted_df = st.session_state.data.sort_values(by=sort_column, ascending=ascending)
 
-    # Display the data table with larger (wider) size
+    # Display the data table with larger (wider and taller) size
     st.dataframe(
         sorted_df,
-        use_container_width=True  # Makes the table stretch the full width of the app
+        height=1000,  # Adjust the height in pixels for a taller table
+        use_container_width=True  # Ensures the table stretches to the full width
     )
 
     # Download button for the data
@@ -59,3 +60,4 @@ if not st.session_state.data.empty:
     )
 else:
     st.error("Failed to fetch data or the data is empty.")
+
