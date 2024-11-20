@@ -56,7 +56,7 @@ if not st.session_state.data.empty:
     # Display the data table with larger (wider and taller) size
     st.dataframe(
         sorted_df,
-        height=1000,  # Adjust the height in pixels for a taller table
+        height=700,  # Adjust the height in pixels for a taller table
         use_container_width=True  # Ensures the table stretches to the full width
     )
 
