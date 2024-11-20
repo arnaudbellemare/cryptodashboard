@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import requests
 from datetime import datetime
-import time
 
 # Configure Streamlit page settings to make the app wider
 st.set_page_config(
@@ -21,20 +20,16 @@ def fetch_data():
             return pd.DataFrame(data), datetime.now()  # Return data and fetch time
     return pd.DataFrame(), None  # Return empty DataFrame and None if API fails
 
-# Auto-refresh app every 60 seconds by setting query parameters
-if "refresh" not in st.experimental_get_query_params():
-    st.experimental_set_query_params(refresh=str(int(time.time())))
-
 # Streamlit app layout
 st.title("Interactive Crypto Data Dashboard")
 
-# Fetch the data if not already fetched
+# Initialize session state
 if "data" not in st.session_state or "last_fetched" not in st.session_state:
     st.session_state.data, st.session_state.last_fetched = fetch_data()
 
 # Manual Refresh Button
 if st.button("Refresh Data"):
-    # Clear session state to force a fresh fetch
+    # Fetch new data and update session state
     st.session_state.data, st.session_state.last_fetched = fetch_data()
 
 # Display last fetch time
@@ -54,7 +49,7 @@ if not st.session_state.data.empty:
     # Display the data table with larger (wider and taller) size
     st.dataframe(
         sorted_df,
-        height=700,  # Adjust the height in pixels for a taller table
+        height=1000,  # Adjust the height in pixels for a taller table
         use_container_width=True  # Ensures the table stretches to the full width
     )
 
