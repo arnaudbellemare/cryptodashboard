@@ -4,6 +4,13 @@ import requests
 from datetime import datetime
 import time
 
+# Configure Streamlit page settings to make the app wider
+st.set_page_config(
+    page_title="Interactive Crypto Dashboard",
+    layout="wide",  # Makes the app take the full width of the browser
+    initial_sidebar_state="expanded"
+)
+
 # Function to fetch data
 def fetch_data():
     url = 'https://api.quantumvoid.org/data/quantdatav2_bybit.json'
@@ -46,7 +53,7 @@ if not st.session_state.data.empty:
     # Display the data table with larger (wider and taller) size
     st.dataframe(
         sorted_df,
-        height=1000,  # Adjust the height in pixels for a taller table
+        height=700,  # Adjust the height in pixels for a taller table
         use_container_width=True  # Ensures the table stretches to the full width
     )
 
@@ -60,4 +67,5 @@ if not st.session_state.data.empty:
     )
 else:
     st.error("Failed to fetch data or the data is empty.")
+
 
