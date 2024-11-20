@@ -1,8 +1,8 @@
 import streamlit as st
-from streamlit_autorefresh import st_autorefresh
 import pandas as pd
 import requests
 from datetime import datetime
+import time
 
 # Function to fetch data
 def fetch_data():
@@ -14,8 +14,9 @@ def fetch_data():
             return pd.DataFrame(data), datetime.now()  # Return data and fetch time
     return pd.DataFrame(), None  # Return empty DataFrame and None if API fails
 
-# Automatically refresh the app every 60 seconds
-st_autorefresh(interval=60 * 1000, key="data_refresh")
+# Auto-refresh app every 60 seconds by setting query parameters
+if "refresh" not in st.experimental_get_query_params():
+    st.experimental_set_query_params(refresh=str(int(time.time())))
 
 # Streamlit app layout
 st.title("Interactive Crypto Data Dashboard")
@@ -51,3 +52,4 @@ if not st.session_state.data.empty:
     )
 else:
     st.error("Failed to fetch data or the data is empty.")
+
