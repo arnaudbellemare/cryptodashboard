@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import requests
 from datetime import datetime
-import time
 
 # Function to fetch data
 def fetch_data():
@@ -14,15 +13,15 @@ def fetch_data():
             return pd.DataFrame(data), datetime.now()  # Return data and fetch time
     return pd.DataFrame(), None  # Return empty DataFrame and None if API fails
 
-# Auto-refresh app every 60 seconds by setting query parameters
-if "refresh" not in st.experimental_get_query_params():
-    st.experimental_set_query_params(refresh=str(int(time.time())))
-
 # Streamlit app layout
 st.title("Interactive Crypto Data Dashboard")
 
-# Fetch the data
+# Fetch the data if not already fetched
 if "data" not in st.session_state or "last_fetched" not in st.session_state:
+    st.session_state.data, st.session_state.last_fetched = fetch_data()
+
+# Refresh data manually
+if st.button("Refresh Data"):
     st.session_state.data, st.session_state.last_fetched = fetch_data()
 
 # Display last fetch time
