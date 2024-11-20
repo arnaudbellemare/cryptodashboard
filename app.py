@@ -38,8 +38,12 @@ if not st.session_state.data.empty:
     # Sort the DataFrame
     sorted_df = st.session_state.data.sort_values(by=sort_column, ascending=ascending)
 
-    # Display the data table
-    st.dataframe(sorted_df)
+    # Display the data table with larger size
+    st.dataframe(
+        sorted_df,
+        height=800,  # Set the height of the table
+        use_container_width=True  # Make the table stretch to the full width
+    )
 
     # Download button for the data
     csv = sorted_df.to_csv(index=False).encode('utf-8')
@@ -51,4 +55,3 @@ if not st.session_state.data.empty:
     )
 else:
     st.error("Failed to fetch data or the data is empty.")
-
