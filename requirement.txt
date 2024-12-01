@@ -1,4 +1,7 @@
 streamlit
 ccxt
 pandas
+numpy
+scipy
+statsmodels
 matplotlib
