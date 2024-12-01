@@ -1,8 +1,7 @@
-streamlit
-pandas
-numpy
-ccxt
-matplotlib
-seaborn
-scipy
-plotly
+streamlit as st
+pandas as pd
+time
+json
+plotly.express as px
+os
+tempfile
