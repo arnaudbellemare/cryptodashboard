@@ -1,7 +1,7 @@
-streamlit as st
-pandas as pd
+streamlit
+pandas
 time
 json
-plotly.express as px
+plotly.express 
 os
 tempfile
