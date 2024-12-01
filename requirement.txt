@@ -1,7 +1,8 @@
 streamlit
-ccxt
 pandas
 numpy
-scipy
-statsmodels
+ccxt
 matplotlib
+seaborn
+scipy
+plotly
