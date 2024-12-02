@@ -3,6 +3,7 @@ ccxt
 plotly
 statsmodels
 seaborn
+scikit-learn
 numpy
 pandas
 scipy
