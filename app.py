@@ -9,6 +9,7 @@ from sklearn.linear_model import LinearRegression
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
 # Initialize the Hyperliquid Exchange
 def initialize_exchange():
     return ccxt.hyperliquid({
@@ -140,7 +141,7 @@ def fetch_and_calculate(exchange, symbols, symbol_map):
                 "ERI Bull Power": eri_result["ERI Bull Power"],
                 "ERI Bear Power": eri_result["ERI Bear Power"],
                 "LTP Change (USD)": df['ltp_ch'].iloc[-1],
-                "Timestamp": datetime.utcnow().isoformat(),
+                "Timestamp": datetime.now(timezone.utc).isoformat(),
             })
 
         except Exception as e:
