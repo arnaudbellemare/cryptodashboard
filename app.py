@@ -1,3 +1,14 @@
+import os
+import sys
+import subprocess
+
+# Install ccxt programmatically if not found
+try:
+    import ccxt
+except ModuleNotFoundError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "ccxt"])
+    import ccxt
+
 import ccxt
 import pandas as pd
 import numpy as np
