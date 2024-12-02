@@ -2,7 +2,7 @@ import ccxt
 import pandas as pd
 import numpy as np
 import streamlit as st
-from datetime import datetime
+from datetime import datetime, timezone
 import time
 from scipy.stats import zscore
 from sklearn.linear_model import LinearRegression
