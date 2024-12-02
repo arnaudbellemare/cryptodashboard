@@ -1,11 +1,13 @@
-
-
 import ccxt
 import pandas as pd
 import numpy as np
 import streamlit as st
-import datetime
+from datetime import datetime
 import time
+from scipy.stats import zscore
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Initialize the Hyperliquid Exchange
 def initialize_exchange():
@@ -26,7 +28,11 @@ def fetch_symbols(exchange):
 def fetch_ohlcv_with_retry(exchange, symbol, timeframe="1m", limit=240, retries=3):
     for attempt in range(retries):
         try:
-            return exchange.fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
+            ohlcv = exchange.fetch_ohlcv(symbol, timeframe=timeframe, limit=limit)
+            if len(ohlcv) < 64:
+                print(f"Skipping {symbol}: Not enough data points (less than 64).")
+                return []
+            return ohlcv
         except Exception as e:
             if attempt < retries - 1:
                 time.sleep(1)
@@ -95,8 +101,7 @@ def fetch_and_calculate(exchange, symbols, symbol_map):
 
             # Fetch OHLCV data
             ohlcv = fetch_ohlcv_with_retry(exchange, symbol)
-            if not ohlcv or len(ohlcv) < 240:
-                print(f"Skipping {symbol}: Not enough OHLCV data (less than 240).")
+            if not ohlcv:
                 continue
 
             df = pd.DataFrame(
@@ -121,6 +126,7 @@ def fetch_and_calculate(exchange, symbols, symbol_map):
             df['ltps'] = df['close'].shift(1)
             df['ltp_ch'] = df['close'] - df['ltps']
 
+            # Append data
             data.append({
                 "Asset": symbol_map[symbol].split('/')[0],
                 "Price": df['close'].iloc[-1],
@@ -141,6 +147,16 @@ def fetch_and_calculate(exchange, symbols, symbol_map):
             print(f"Error processing {symbol}: {e}")
     return pd.DataFrame(data)
 
+# Generate predictive signals
+def generate_signals(df):
+    if len(df) < 100:
+        st.write("Not enough data for regression.")
+        return pd.DataFrame()
+
+    reg = LinearRegression(fit_intercept=False, positive=True)
+    df['Pred_Combined'] = reg.fit(df[['Skew', 'Imbalance']], df['mid']).predict(df[['Skew', 'Imbalance']])
+    return df
+
 # Main Streamlit App
 def main():
     st.title("Crypto Metrics Dashboard")
@@ -152,6 +168,15 @@ def main():
 
     while True:
         data = fetch_and_calculate(exchange, symbols, symbol_map)
+        if data.empty:
+            st.write("No data available for calculation.")
+            time.sleep(refresh_interval)
+            continue
+
+        # Generate predictive signals
+        data = generate_signals(data)
+
+        # Display data
         st.subheader("Fetched Data (Full Table)")
         st.dataframe(data)
 
@@ -165,13 +190,9 @@ def main():
         st.subheader("Rotator Symbols (1m Volume > 16000)")
         st.dataframe(rotator)
 
-        st.subheader("Top Symbols by Aggregated OIR")
-        oir_sorted = data.sort_values(by="OIR10", ascending=False).head(10)
-        st.dataframe(oir_sorted)
-
-        st.subheader("Top Symbols by Aggregated VOI")
-        voi_sorted = data.sort_values(by="VOI10", ascending=False).head(10)
-        st.dataframe(voi_sorted)
+        st.subheader("Top Symbols by Predicted Combined Metric")
+        top_combined = data.sort_values(by="Pred_Combined", ascending=False).head(10)
+        st.dataframe(top_combined)
 
         time.sleep(refresh_interval)
 
